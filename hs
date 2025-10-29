@@ -4,8 +4,21 @@
 SCREENDIR="/var/run/screen/S-$USER"
 [[ ! -d "$SCREENDIR" ]] && SCREENDIR="$HOME/.screen"
 
-# Parse screen sessions (preserves spaces)
-mapfile -t sessions < <(screen -ls | grep -oP '\d+\.\K[^\t(]+' | sed 's/[[:space:]]*$//')
+# Parse screen sessions (preserves spaces) and get full output for connection info
+screen_output=$(screen -ls)
+mapfile -t sessions < <(echo "$screen_output" | grep -oP '\d+\.\K[^\t(]+' | sed 's/[[:space:]]*$//')
+
+# Get connection counts for each session
+declare -A conn_counts
+while IFS= read -r line; do
+    if [[ "$line" =~ ([0-9]+)\.([^[:space:]]+) ]]; then
+        session_name="${BASH_REMATCH[2]}"
+        # Count attached connections (look for "Attached" in the line)
+        if [[ "$line" =~ Attached ]]; then
+            ((conn_counts["$session_name"]++))
+        fi
+    fi
+done <<< "$screen_output"
 
 if [ ${#sessions[@]} -eq 0 ]; then
     echo "No active screens."
@@ -16,8 +29,8 @@ fi
 
 echo "There are ${#sessions[@]} screen(s) currently running:"
 echo ""
-printf "%-4s %-25s %-20s %-20s\n" "#" "Name" "Last Active" "Created"
-echo "────────────────────────────────────────────────────────────────────"
+printf "%-4s %-25s %-20s %-20s %-12s\n" "#" "Name" "Last Active" "Created" "Connections"
+echo "─────────────────────────────────────────────────────────────────────────────────"
 
 for i in "${!sessions[@]}"; do
     name="${sessions[$i]}"
@@ -31,7 +44,8 @@ for i in "${!sessions[@]}"; do
         modified="unknown"
         created="unknown"
     fi
-    printf "%-4s %-25s %-20s %-20s\n" "$((i+1))." "$name" "$modified" "$created"
+    conns="${conn_counts[$name]:-0}"
+    printf "%-4s %-25s %-20s %-20s %-12s\n" "$((i+1))." "$name" "$modified" "$created" "$conns"
 done
 
 echo ""
@@ -48,7 +62,7 @@ elif [[ "$choice" == "k" ]]; then
         [[ "$confirm" == "y" ]] && screen -S "${sessions[$idx]}" -X quit && echo "Killed."
     fi
 elif [[ "$choice" =~ ^[0-9]+$ ]] && [[ $choice -ge 1 && $choice -le ${#sessions[@]} ]]; then
-    screen -r "${sessions[$((choice-1))]}"
+    screen -x "${sessions[$((choice-1))]}"
 else
     echo "Invalid choice."
 fi
