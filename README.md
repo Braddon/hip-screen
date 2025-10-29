@@ -8,7 +8,7 @@ Screen is powerful but clunky - remembering session names does not make me fun a
 
 Thankfully `hip-screen` makes it dead simple:
 
-- **Named sessions you'll actually remember** - "claude-code-dev" beats "23847.pts-2.hostname"
+- **Named sessions you'll actually remember** - "Big Jim's little bug" beats "23847.pts-2.hostname"
 - **See everything at a glance** - what's running, when you last touched it, when you created it
 - **Quick attach/detach** - perfect for remote work sessions
 
@@ -18,7 +18,7 @@ Thankfully `hip-screen` makes it dead simple:
 
 ```bash
 # Download
-curl -O https://raw.githubusercontent.com/[your-repo]/hip-screen/main/hs
+curl -O https://raw.githubusercontent.com/Braddon/hip-screen/main/hs
 # Or just copy the script
 
 # Make executable and install
