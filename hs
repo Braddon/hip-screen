@@ -4,6 +4,13 @@
 SCREENDIR="/var/run/screen/S-$USER"
 [[ ! -d "$SCREENDIR" ]] && SCREENDIR="$HOME/.screen"
 
+# Check if we're already in a screen session
+CURRENT_SESSION=""
+if [[ -n "$STY" ]]; then
+    # Extract session name from STY (format: PID.session_name)
+    CURRENT_SESSION="${STY#*.}"
+fi
+
 # Parse screen sessions (preserves spaces) and get full output for connection info
 screen_output=$(screen -ls)
 mapfile -t sessions < <(echo "$screen_output" | grep -oP '\d+\.\K[^\t(]+' | sed 's/[[:space:]]*$//')
@@ -29,6 +36,16 @@ fi
 
 echo "There are ${#sessions[@]} screen(s) currently running:"
 echo ""
+
+# Get terminal width
+term_width=$(tput cols 2>/dev/null || echo 80)
+# Calculate if inline note will fit (base table width ~86 + note text ~30 = ~116)
+use_footnote=false
+footnote_text=""
+if [[ $term_width -lt 116 ]]; then
+    use_footnote=true
+fi
+
 printf "%-4s %-25s %-20s %-20s %-12s\n" "#" "Name" "Last Active" "Created" "Connections"
 echo "─────────────────────────────────────────────────────────────────────────────────"
 
@@ -45,8 +62,27 @@ for i in "${!sessions[@]}"; do
         created="unknown"
     fi
     conns="${conn_counts[$name]:-0}"
-    printf "%-4s %-25s %-20s %-20s %-12s\n" "$((i+1))." "$name" "$modified" "$created" "$conns"
+
+    # Check if this is the current session
+    display_name="$name"
+    note=""
+    if [[ "$name" == "$CURRENT_SESSION" ]]; then
+        display_name="${name}^"
+        if $use_footnote; then
+            footnote_text="^ [you are already in '$name']"
+        else
+            note="<--- you are already in here"
+        fi
+    fi
+
+    printf "%-4s %-25s %-20s %-20s %-12s %s\n" "$((i+1))." "$display_name" "$modified" "$created" "$conns" "$note"
 done
+
+# Display footnote if needed
+if [[ -n "$footnote_text" ]]; then
+    echo ""
+    echo "$footnote_text"
+fi
 
 echo ""
 read -p "Select session number, 'n' for new, 'k' to kill: " choice
