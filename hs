@@ -87,14 +87,28 @@ fi
 echo ""
 read -p "Select session number, 'n' for new, 'k' to kill: " choice
 
+# Check for ESC key
+if [[ "$choice" == $'\e' ]]; then
+    exit 0
+fi
+
 if [[ "$choice" == "n" ]]; then
     read -p "Name: " name
+    if [[ "$name" == $'\e' ]]; then
+        exit 0
+    fi
     [[ -n "$name" ]] && screen -S "$name" || echo "Cancelled."
 elif [[ "$choice" == "k" ]]; then
     read -p "Kill session number: " num
+    if [[ "$num" == $'\e' ]]; then
+        exit 0
+    fi
     idx=$((num-1))
     if [[ $idx -ge 0 && $idx -lt ${#sessions[@]} ]]; then
         read -p "Kill session $num [${sessions[$idx]}]? (y/N): " confirm
+        if [[ "$confirm" == $'\e' ]]; then
+            exit 0
+        fi
         [[ "$confirm" == "y" ]] && screen -S "${sessions[$idx]}" -X quit && echo "Killed."
     fi
 elif [[ "$choice" =~ ^[0-9]+$ ]] && [[ $choice -ge 1 && $choice -le ${#sessions[@]} ]]; then
