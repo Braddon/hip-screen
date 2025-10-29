@@ -1,6 +1,6 @@
 # hip-screen (hs)
 
-**A friendlier way to manage GNU Screen sessions.**
+**GNU screen for cool kids with bad memories**
 
 ## Why?
 
