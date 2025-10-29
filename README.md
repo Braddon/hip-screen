@@ -4,7 +4,7 @@
 
 ## Why?
 
-Screen is powerful but clunky - remembering session names does not make me fun at parties.  And so i made `hip-screen` so i can focus on fun - you too can change your life with this one command line tool.  
+Screen is powerful but clunky, and remembering session names does not make me fun at parties.  And that's why i made `hip-screen`.   You too can change your life with this one command line tool.  
 
 Thankfully `hip-screen` makes it dead simple:
 
