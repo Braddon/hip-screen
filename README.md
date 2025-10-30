@@ -12,7 +12,7 @@ Thankfully `hip-screen` makes it dead simple:
 - **See everything at a glance** - what's running, when you last touched it, when you created it
 - **Quick attach/detach** - perfect for remote work sessions
 
-**Real-world scenario:** I run Claude Code on a remote servers, because that's how i roll.  I even use termius on m mob so i can monitor them - yes life is really that amazing.  When i need a latte but I don't want to lose my place, it really bugs me to reconnect to the screens sessions on remote.  That's why i created hip-screen - and now I'm sharing it -  now you can go grab a latte too!
+**Real-world scenario:** I run Claude Code on a remote servers, because that's how i roll.  I even use termius on m mob so i can monitor them - yes life is really that amazing.  When i need a latte but I don't want to lose my place, it really bugs me to reconnect to the screens sessions on remote.  That's why i created hip-screen - and now I'm sharing it so you can go grab a latte too!
 
  Installation
 
