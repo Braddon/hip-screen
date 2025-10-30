@@ -32,7 +32,7 @@ if [ ${#sessions[@]} -eq 0 ]; then
     echo -n "Create new session - Name: "
     name=""
     while true; do
-        read -n 1 -s char
+        IFS= read -n 1 -s char
         if [[ "$char" == $'\e' ]]; then
             echo ""
             exit 0
@@ -104,7 +104,7 @@ echo -n "Select session number, 'n' for new, 'k' to kill: "
 # Read input character by character to handle ESC immediately
 choice=""
 while true; do
-    read -n 1 -s char
+    IFS= read -n 1 -s char
 
     # Check for ESC
     if [[ "$char" == $'\e' ]]; then
@@ -127,7 +127,7 @@ if [[ "$choice" == "n" ]]; then
     echo -n "Name: "
     name=""
     while true; do
-        read -n 1 -s char
+        IFS= read -n 1 -s char
         if [[ "$char" == $'\e' ]]; then
             echo ""
             exit 0
@@ -144,7 +144,7 @@ elif [[ "$choice" == "k" ]]; then
     echo -n "Kill session number: "
     num=""
     while true; do
-        read -n 1 -s char
+        IFS= read -n 1 -s char
         if [[ "$char" == $'\e' ]]; then
             echo ""
             exit 0
@@ -161,7 +161,7 @@ elif [[ "$choice" == "k" ]]; then
         echo -n "Kill session $num [${sessions[$idx]}]? (y/N): "
         confirm=""
         while true; do
-            read -n 1 -s char
+            IFS= read -n 1 -s char
             if [[ "$char" == $'\e' ]]; then
                 echo ""
                 exit 0
