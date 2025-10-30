@@ -15,17 +15,13 @@ fi
 screen_output=$(screen -ls)
 mapfile -t sessions < <(echo "$screen_output" | grep -oP '\d+\.\K[^\t(]+' | sed 's/[[:space:]]*$//')
 
-# Get connection counts for each session
+# Get connection counts for each session by counting screen client processes
 declare -A conn_counts
-while IFS= read -r line; do
-    if [[ "$line" =~ ([0-9]+)\.([^[:space:]]+) ]]; then
-        session_name="${BASH_REMATCH[2]}"
-        # Count attached connections (look for "Attached" in the line)
-        if [[ "$line" =~ Attached ]]; then
-            ((conn_counts["$session_name"]++))
-        fi
-    fi
-done <<< "$screen_output"
+for session_name in "${sessions[@]}"; do
+    # Count screen client processes for this session
+    count=$(ps -eo cmd | grep -F "screen" | grep -F "$session_name" | grep -v "SCREEN" | grep -v grep | wc -l)
+    conn_counts["$session_name"]=$count
+done
 
 if [ ${#sessions[@]} -eq 0 ]; then
     echo "No active screens."
@@ -177,6 +173,4 @@ elif [[ "$choice" == "k" ]]; then
     fi
 elif [[ "$choice" =~ ^[0-9]+$ ]] && [[ $choice -ge 1 && $choice -le ${#sessions[@]} ]]; then
     screen -x "${sessions[$((choice-1))]}"
-else
-    echo "Invalid choice."
 fi
