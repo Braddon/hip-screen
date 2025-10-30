@@ -65,20 +65,42 @@ if [[ $term_width -lt 116 ]]; then
     use_footnote=true
 fi
 
-printf "%-4s %-25s %-20s %-20s %-12s\n" "#" "Name" "Last Active" "Created" "Connections"
-echo "─────────────────────────────────────────────────────────────────────────────────"
+printf "%-4s %-25s %-12s %-12s\n" "#" "Name" "Last Active" "Connections"
+# printf "%-4s %-25s %-20s %-20s %-12s\n" "#" "Name" "Last Active" "Created" "Connections"
+echo "──────────────────────────────────────────────────────────────────────"
+# echo "─────────────────────────────────────────────────────────────────────────────────"
 
 for i in "${!sessions[@]}"; do
     name="${sessions[$i]}"
     # Find socket file (handle spaces)
     socket=$(find "$SCREENDIR" -name "*.$name" 2>/dev/null | head -1)
     if [[ -n "$socket" ]]; then
-        modified=$(stat -c %y "$socket" 2>/dev/null | cut -d. -f1)
-        created=$(stat -c %w "$socket" 2>/dev/null | cut -d. -f1)
-        [[ "$created" == "-" ]] && created=$(stat -c %y "$socket" 2>/dev/null | cut -d. -f1)
+        modified_epoch=$(stat -c %Y "$socket" 2>/dev/null)
+        # created=$(stat -c %w "$socket" 2>/dev/null | cut -d. -f1)
+        # [[ "$created" == "-" ]] && created=$(stat -c %y "$socket" 2>/dev/null | cut -d. -f1)
+
+        # Calculate time since last active
+        current_epoch=$(date +%s)
+        seconds_ago=$((current_epoch - modified_epoch))
+
+        if [[ $seconds_ago -lt 60 ]]; then
+            time_ago="${seconds_ago} secs"
+        elif [[ $seconds_ago -lt 3600 ]]; then
+            minutes_ago=$((seconds_ago / 60))
+            time_ago="${minutes_ago} mins"
+        elif [[ $seconds_ago -lt 86400 ]]; then
+            hours_ago=$((seconds_ago / 3600))
+            time_ago="${hours_ago} hrs"
+        elif [[ $seconds_ago -lt 2592000 ]]; then
+            days_ago=$((seconds_ago / 86400))
+            time_ago="${days_ago} days"
+        else
+            weeks_ago=$((seconds_ago / 604800))
+            time_ago="${weeks_ago} wks"
+        fi
     else
-        modified="unknown"
-        created="unknown"
+        time_ago="unknown"
+        # created="unknown"
     fi
     conns="${conn_counts[$name]:-0}"
 
@@ -94,7 +116,8 @@ for i in "${!sessions[@]}"; do
         fi
     fi
 
-    printf "%-4s %-25s %-20s %-20s %-12s %s\n" "$((i+1))." "$display_name" "$modified" "$created" "$conns" "$note"
+    printf "%-4s %-25s %-12s %-12s %s\n" "$((i+1))." "$display_name" "$time_ago" "$conns" "$note"
+    # printf "%-4s %-25s %-20s %-20s %-12s %s\n" "$((i+1))." "$display_name" "$modified" "$created" "$conns" "$note"
 done
 
 # Display footnote if needed
