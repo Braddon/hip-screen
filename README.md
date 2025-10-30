@@ -35,13 +35,15 @@ hs
 $ hs
 There are 3 screen(s) currently running:
 
-#    Name                      Last Active          Created             
-────────────────────────────────────────────────────────────────────
-1.   claude code dev          2025-10-30 14:23:15  2025-10-30 09:15:42
-2.   database backup          2025-10-30 14:20:01  2025-10-29 22:10:33
-3.   server logs              2025-10-30 12:45:22  2025-10-30 08:00:11
+#    Name                      Last Active          Created              Connections
+─────────────────────────────────────────────────────────────────────────────────────
+1.   adding reflow^           2025-10-30 14:23:15  2025-10-30 09:15:42  1
+2.   database backup          2025-10-30 14:20:01  2025-10-29 22:10:33  0
+3.   server logs              2025-10-30 12:45:22  2025-10-30 08:00:11  2
 
-Select session number, 'n' for new, 'k' to kill: 
+^ [you are already in 'adding reflow']
+
+Select session number, 'n' for new, 'k' to kill:
 ```
 
 Type a number to attach, `n` to create a new named session, or `k` to kill an old one.
