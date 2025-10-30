@@ -104,7 +104,6 @@ if [[ -n "$footnote_text" ]]; then
 fi
 
 echo ""
-show_exit_hint=false
 echo -n "Select session number, 'n' for new, 'k' to kill: "
 
 # Read input character by character to handle ESC immediately
@@ -141,13 +140,8 @@ while true; do
 done
 
     if [[ -z "$choice" ]]; then
-        # Empty input - show hint and re-prompt
-        if $show_exit_hint; then
-            echo -n "Select session number, 'n' for new, 'k' to kill, 'q' to exit: "
-        else
-            show_exit_hint=true
-            echo -n "Select session number, 'n' for new, 'k' to kill: "
-        fi
+        # Empty input - show extended prompt with quit option
+        echo -n "Select session number, 'n' for new, 'k' to kill, 'q' to quit: "
         # Re-read input
         choice=""
         while true; do
