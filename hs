@@ -177,6 +177,4 @@ elif [[ "$choice" == "k" ]]; then
     fi
 elif [[ "$choice" =~ ^[0-9]+$ ]] && [[ $choice -ge 1 && $choice -le ${#sessions[@]} ]]; then
     screen -x "${sessions[$((choice-1))]}"
-else
-    echo "Invalid choice."
 fi
