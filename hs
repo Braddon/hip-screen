@@ -65,7 +65,13 @@ if [[ $term_width -lt 116 ]]; then
     use_footnote=true
 fi
 
-printf "%-4s %-25s %-12s %-12s\n" "#" "Name" "Last Active" "Connections"
+# ANSI formatting codes
+BOLD='\033[1m'
+RESET='\033[0m'
+# Using cyan background which works well in both light and dark themes
+HIGHLIGHT='\033[1;46;30m'  # Bold + Cyan background + Black text
+
+printf "${BOLD}%-4s %-25s %-12s %-12s${RESET}\n" "#" "Name" "Last Active" "Connections"
 # printf "%-4s %-25s %-20s %-20s %-12s\n" "#" "Name" "Last Active" "Created" "Connections"
 echo "──────────────────────────────────────────────────────────"
 # echo "─────────────────────────────────────────────────────────────────────────────────"
@@ -107,8 +113,12 @@ for i in "${!sessions[@]}"; do
     # Check if this is the current session
     display_name="$name"
     note=""
+    row_prefix=""
+    row_suffix=""
     if [[ "$name" == "$CURRENT_SESSION" ]]; then
         display_name="${name}^"
+        row_prefix="$HIGHLIGHT"
+        row_suffix="$RESET"
         if $use_footnote; then
             footnote_text="^ [you are already in '$name']"
         else
@@ -116,7 +126,7 @@ for i in "${!sessions[@]}"; do
         fi
     fi
 
-    printf "%-4s %-25s %-12s %-12s %s\n" "$((i+1))." "$display_name" "$time_ago" "$conns" "$note"
+    printf "${row_prefix}%-4s %-25s %-12s %-12s %s${row_suffix}\n" "$((i+1))." "$display_name" "$time_ago" "$conns" "$note"
     # printf "%-4s %-25s %-20s %-20s %-12s %s\n" "$((i+1))." "$display_name" "$modified" "$created" "$conns" "$note"
 done
 
